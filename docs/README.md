@@ -27,10 +27,10 @@ Below is a visual representation of how the branches are organized:
 
 ### 1. Clone the Repository
 
-\`\`\`bash
+```bash
 git clone --branch <platform-branch-name> https://github.com/<mariusmucenicu>/<dotfiles>.git dotfiles
 cd dotfiles
-\`\`\`
+```
 
 Replace `<platform-branch-name>` with your platform of choice:
 - `macos`
@@ -44,20 +44,20 @@ Replace `<platform-branch-name>` with your platform of choice:
 Each branch includes a platform-specific entry point in the `scripts/` directory. For example:
 
 #### macOS:
-\`\`\`bash
+```bash
 ./scripts/bootstrap.sh
-\`\`\`
+```
 
 #### Windows:
 Run the corresponding PowerShell script:
-\`\`\`powershell
+```powershell
 .\scripts\install.ps1
-\`\`\`
+```
 
 #### Linux:
-\`\`\`bash
+```bash
 ./scripts/bootstrap.sh
-\`\`\`
+```
 
 ---
 
