@@ -1,9 +1,11 @@
+#!/bin/zsh
+
 # This script is designed to automate the synchronization of multiple Git branches. It defines a set
 # of parent branches and their corresponding child branches, then iterates through each parent-child
 # relationship to ensure that changes in the parent branches are propagated to their child branches.
 # This helps maintain consistency across the branches by rebasing and force-pushing updates.
 
-declare -A BRANCHES
+typeset -A BRANCHES
 
 BRANCHES=(
     [master]="unix windows"
