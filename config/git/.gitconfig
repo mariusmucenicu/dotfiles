@@ -1,7 +1,7 @@
 [alias]
   co = checkout
   lg = log --oneline --graph --all --pretty=format:'%C(bold cyan)%h%C(reset) \
-  "%C(#c28cf2)"(%ar)%C(reset) %s - "%C(#aad6f6)"%ae%C(reset) "%C(#ff9c00)"%d%C(reset)%n'
+  "%C(#c28cf2)"(%ar)%C(reset) %s - "%C(#aad6f6)"%ae%C(reset) "%C(#ff9c00)"%d%C(reset)'
   st = status --short
 
 [help]
