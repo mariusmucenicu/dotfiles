@@ -1,0 +1,11 @@
+# Include additional local-specific or sensitive SSH configurations
+Include ~/.ssh/config.local
+
+Host *
+    User dev
+    IdentityFile ~/.ssh/id_rsa
+    ForwardAgent yes
+    ServerAliveInterval 300
+    ServerAliveCountMax 2
+    Compression yes
+    AddKeysToAgent yes
