@@ -1,14 +1,28 @@
 [alias]
-  co = checkout
-  lg = log --oneline --graph --all --pretty=format:'%C(bold cyan)%h%C(reset) \
-  "%C(#c28cf2)"(%ar)%C(reset) %s - "%C(#aad6f6)"%ae%C(reset) "%C(#ff9c00)"%d%C(reset)'
-  st = status --short
+  b = branch
+  cm = commit -m
+  cam = commit -am
+  d = diff
+  ds = diff --staged
+  fix = commit --amend --no-edit
+  lg = log --oneline --graph --pretty=custom
+  lga = log --oneline --graph --all --pretty=custom
+  s = switch
+  sc = switch -c
+  sl = stash list
+  sts = status --short
+
+[color "branch"]
+  current = bold yellow
 
 [help]
   autoCorrect = prompt
 
 [init]
   defaultBranch = master
+
+[pretty]
+  custom = %C(cyan)%h%C(reset) - %C(green)(%ar)%C(reset) %s %C(blue)[%an]%C(reset) %C(yellow)%D%C(reset)
 
 [push]
   autoSetupRemote = true
