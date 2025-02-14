@@ -1,4 +1,4 @@
-# Include additional local-specific or sensitive SSH configurations
+# Include sensitive or environment-specific SSH configurations
 Include ~/.ssh/config.local
 
 Host *
