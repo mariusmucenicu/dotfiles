@@ -68,6 +68,7 @@
 [init]
   defaultBranch = master
 
+# Include sensitive or environment-specific Git configurations
 [include]
   path = ~/.gitconfig.local
 
