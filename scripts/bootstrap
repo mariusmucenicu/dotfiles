@@ -1,0 +1,53 @@
+#!/bin/zsh
+
+#If a command has a non-zero exit status, execute the ZERR trap, if set, and exit.
+set -e
+
+# Treat unset variables as an error and exit immediately.
+set -u
+
+# Return the exit status of the last command in a pipeline that failed, rather than the exit status
+# of the last command in the pipeline.
+set -o pipefail
+
+
+DRY_RUN=${DRY_RUN:-false}
+ROOT_DIR=$(git rev-parse --show-toplevel)
+
+typeset -A STOW_DESTINATIONS
+
+STOW_DESTINATIONS=(
+  [$HOME]="zsh git"
+  [$HOME/.ssh/]="ssh"
+  [$HOME/.config/]="starship"
+)
+
+create_symlinks() {
+  local destination=$1
+  local package=$2
+  local package_location=$3
+
+  pushd $(dirname $package_location) > /dev/null
+
+  if [[ $DRY_RUN == "true" ]]; then
+    stow --simulate --verbose --adopt --target $destination $package
+  else
+    stow --adopt --target $destination $package
+  fi
+
+  popd > /dev/null
+}
+
+
+for destination in ${(k)STOW_DESTINATIONS}; do
+  for package in ${(z)STOW_DESTINATIONS[$destination]}; do  
+
+    package_location=$(find $ROOT_DIR -type d -name $package)
+    if [[ -z $package_location ]]; then
+      continue
+    else
+      create_symlinks $destination $package $package_location
+    fi
+
+  done
+done
