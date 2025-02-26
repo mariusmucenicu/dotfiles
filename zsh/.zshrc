@@ -36,6 +36,6 @@ for config_file in "${ZSH_CONFIG_FILES[@]}"; do
   if [[ -f $config_file ]]; then
     source $config_file
   else
-    $DEBUG && echo "No $config_file found, skipping..."
+    echo "No $config_file found, skipping..."
   fi
 done
