@@ -1,7 +1,3 @@
-# Set DEBUG=true in the local .env configuration file to enable fine-grained, selective logging
-# Use set -x or set -v for more verbose tracing
-export DEBUG=false
-
 # .env contains local, environment-specific settings, including API keys, database credentials,
 # and other project-specific configurations. This file is intended for local development only and
 # should never be committed to version control.
@@ -15,5 +11,5 @@ export DEBUG=false
 if [[ -f ~/.env ]]; then
   source ~/.env
 else
-  $DEBUG && echo "No .env file found, skipping..."
+  echo "No .env file found, skipping..."
 fi
