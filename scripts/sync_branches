@@ -9,7 +9,7 @@ typeset -A BRANCHES
 
 BRANCHES=(
     [master]="unix windows"
-    [unix]="linux macos"
+    [unix]="linux darwin"
 )
 
 for parent_branch in ${(k)BRANCHES}; do
