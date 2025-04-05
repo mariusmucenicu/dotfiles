@@ -5,6 +5,8 @@
 # relationship to ensure that changes in the parent branches are propagated to their child branches.
 # This helps maintain consistency across the branches by rebasing and force-pushing updates.
 
+set -euo pipefail
+
 typeset -A BRANCHES
 
 BRANCHES=(
@@ -18,8 +20,15 @@ for parent_branch in ${(k)BRANCHES}; do
         git pull origin $parent_branch
     fi
     for child_branch in ${(z)BRANCHES[$parent_branch]}; do
+        [[ $child_branch == ${$(uname -s):l} ]] && PLATFORM=$child_branch
         git checkout $child_branch
         git rebase $parent_branch
         git push origin $child_branch --force-with-lease
     done
 done
+
+if [[ ${PLATFORM} != $(git branch --show-current) ]]; then
+    git checkout $PLATFORM
+else
+    echo "Skipping checkout, already on $PLATFORM"
+fi
