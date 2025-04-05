@@ -10,25 +10,35 @@ set -euo pipefail
 typeset -A BRANCHES
 
 BRANCHES=(
-    [master]="unix windows"
-    [unix]="linux darwin"
+  [master]="unix windows"
+  [unix]="linux darwin"
 )
 
+
+sync_branch() {
+  local parent_branch=$1
+  local child_branch=$2
+
+  git switch $child_branch
+  git pull origin $child_branch
+  git rebase $parent_branch
+  git push origin $child_branch --force-with-lease
+}
+
 for parent_branch in ${(k)BRANCHES}; do
-    if [[ $parent_branch == "master" ]]; then
-        git checkout $parent_branch
-        git pull origin $parent_branch
-    fi
-    for child_branch in ${(z)BRANCHES[$parent_branch]}; do
-        [[ $child_branch == ${$(uname -s):l} ]] && PLATFORM=$child_branch
-        git checkout $child_branch
-        git rebase $parent_branch
-        git push origin $child_branch --force-with-lease
-    done
+  if [[ $parent_branch == "master" ]]; then
+    git switch $parent_branch
+    git pull origin $parent_branch
+  fi
+
+  for child_branch in ${(z)BRANCHES[$parent_branch]}; do
+    [[ $child_branch == ${$(uname -s):l} ]] && PLATFORM=$child_branch
+    sync_branch $parent_branch $child_branch > /dev/null
+  done
 done
 
-if [[ ${PLATFORM} != $(git branch --show-current) ]]; then
-    git checkout $PLATFORM
+if [[ ${PLATFORM:-} != $(git branch --show-current) ]]; then
+  git switch $PLATFORM
 else
-    echo "Skipping checkout, already on $PLATFORM"
+  echo "Skipping checkout, already on $PLATFORM"
 fi
