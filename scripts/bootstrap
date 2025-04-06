@@ -17,7 +17,7 @@ ROOT_DIR=$(git rev-parse --show-toplevel)
 typeset -A STOW_DESTINATIONS
 
 STOW_DESTINATIONS=(
-  [$HOME]="zsh git"
+  [$HOME]="zsh git vim"
   [$HOME/.ssh/]="ssh"
   [$HOME/.config/]="starship"
 )
