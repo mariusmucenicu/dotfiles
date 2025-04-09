@@ -1,7 +1,7 @@
 [alias]
   b = branch
   cm = commit -m
-  cam = commit -am
+  cma = commit -am
   d = diff
   ds = diff --staged
   fix = commit --amend --no-edit
@@ -10,10 +10,15 @@
   s = switch
   sc = switch -c
   sl = stash list
+  st = status
   sts = status --short
 
 [color "branch"]
   current = bold yellow
+
+[fetch]
+  prune = true
+  pruneTags = true
 
 [help]
   autoCorrect = prompt
@@ -23,6 +28,9 @@
 
 [pretty]
   custom = %C(cyan)%h%C(reset) - %C(green)(%ar)%C(reset) %s %C(blue)[%an]%C(reset) %C(yellow)%D%C(reset)
+
+[pull]
+  rebase = true
 
 [push]
   autoSetupRemote = true
