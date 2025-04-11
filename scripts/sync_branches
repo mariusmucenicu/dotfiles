@@ -28,7 +28,7 @@ sync_branch() {
 for parent_branch in ${(k)BRANCHES}; do
   if [[ $parent_branch == "master" ]]; then
     git switch $parent_branch
-    git pull origin $parent_branch
+    git pull -q origin $parent_branch
   fi
 
   for child_branch in ${(z)BRANCHES[$parent_branch]}; do
