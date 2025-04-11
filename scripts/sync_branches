@@ -20,9 +20,9 @@ sync_branch() {
   local child_branch=$2
 
   git switch $child_branch
-  git pull origin $child_branch
-  git rebase $parent_branch
-  git push origin $child_branch --force-with-lease
+  git pull -q origin $child_branch
+  git rebase -q $parent_branch
+  git push -q origin $child_branch --force-with-lease
 }
 
 for parent_branch in ${(k)BRANCHES}; do
