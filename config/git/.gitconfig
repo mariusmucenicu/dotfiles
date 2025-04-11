@@ -1,5 +1,5 @@
 [advice]
-  skippedCherryPicks = true
+  skippedCherryPicks = false
 
 [alias]
   a = add
