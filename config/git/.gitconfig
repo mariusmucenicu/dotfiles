@@ -1,15 +1,26 @@
 [alias]
+  a = add
   b = branch
+  cd = clean -d
+  cf = clean -f
+  cfd = clean -fd
   cm = commit -m
   cma = commit -am
   d = diff
+  del = branch -D
+  dn = diff --name-only
   ds = diff --staged
   fix = commit --amend --no-edit
   lg = log --oneline --graph --pretty=custom
   lga = log --oneline --graph --all --pretty=custom
+  r = restore
+  rb = rebase
+  rbi = rebase -i
+  rs = restore --staged
   s = switch
   sc = switch -c
   sl = stash list
+  sp = stash pop
   st = status
   sts = status --short
 
