@@ -24,8 +24,8 @@
   rss = reset --soft
   rst = restore
   rsts = restore --staged
-  s = switch
-  sc = switch -c
+  sw = switch
+  swc = switch -c
   sd = stash drop
   sl = stash list
   sp = stash pop
