@@ -1,3 +1,6 @@
+[advice]
+  skippedCherryPicks = true
+
 [alias]
   a = add
   b = branch
