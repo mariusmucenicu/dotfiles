@@ -2,35 +2,56 @@
   skippedCherryPicks = false
 
 [alias]
+  # Staging & Restore
   a = add
-  br = branch
-  brd = branch -D
-  cd = clean -d
-  cf = clean -f
-  cfd = clean -fd
+  undo = restore
+  unstage = restore --staged
+
+  # Commit
   cm = commit -m
   cma = commit -am
-  df = diff
-  dn = diff --name-only
-  ds = diff --staged
+  cp = cherry-pick
   fix = commit --amend --no-edit
-  lg = log --oneline --graph --pretty=custom
-  lga = log --oneline --graph --all --pretty=custom
-  rb = rebase
-  rbi = rebase -i
-  rp = remote prune
-  rs = reset
-  rsh = reset --hard
-  rss = reset --soft
-  rst = restore
-  rsts = restore --staged
-  sw = switch
-  swc = switch -c
+
+  # Branch management
+  br = branch
+  del = branch -D
+  s = switch
+  sc = switch -c
+
+  # Stash
   sd = stash drop
   sl = stash list
   sp = stash pop
+
+  # Diff & Log
+  d = diff
+  dn = diff --name-only
+  dns = diff --staged --name-only
+  ds = diff --staged
+  lg = log --oneline --graph --pretty=custom
+  lga = log --oneline --graph --all --pretty=custom
+
+  # Reset
+  r = reset
+  rh = reset --hard
+  rs = reset --soft
+
+  # Remote & Push/Pull
+  pf = push --force-with-lease
+  po = pull origin
+  rpo = remote prune origin
+
+  # Status & Clean
+  cd = clean -d
+  cf = clean -f
+  cfd = clean -fd
   st = status
   sts = status --short
+
+  # Rebase
+  rb = rebase
+  rbi = rebase -i
 
 [color "branch"]
   current = bold yellow
