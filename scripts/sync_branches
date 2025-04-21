@@ -1,9 +1,10 @@
 #!/bin/zsh
 
-# This script is designed to automate the synchronization of multiple Git branches. It defines a set
-# of parent branches and their corresponding child branches, then iterates through each parent-child
-# relationship to ensure that changes in the parent branches are propagated to their child branches.
-# This helps maintain consistency across the branches by rebasing and force-pushing updates.
+# This script automates the synchronization of multiple Git branches. It defines 
+# a set of parent branches and their corresponding child branches, then iterates 
+# through each parent-child relationship to ensure that changes in the parent 
+# branches are propagated to their child branches. This helps maintain 
+# consistency across the branches by rebasing and force-pushing updates.
 
 set -euo pipefail
 
@@ -20,15 +21,15 @@ sync_branch() {
   local child_branch=$2
 
   git switch $child_branch
-  git pull -q origin $child_branch
+  git pull origin $child_branch
   git rebase -q $parent_branch
-  git push -q origin $child_branch --force-with-lease
+  git push --force-with-lease origin $child_branch
 }
 
 for parent_branch in ${(k)BRANCHES}; do
   if [[ $parent_branch == "master" ]]; then
     git switch $parent_branch
-    git pull -q origin $parent_branch
+    git pull origin $parent_branch
   fi
 
   for child_branch in ${(z)BRANCHES[$parent_branch]}; do
@@ -39,6 +40,4 @@ done
 
 if [[ ${PLATFORM:-} != $(git branch --show-current) ]]; then
   git switch $PLATFORM
-else
-  echo "Skipping checkout, already on $PLATFORM"
 fi
