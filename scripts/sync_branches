@@ -21,7 +21,7 @@ sync_branch() {
   local child_branch=$2
 
   git switch $child_branch
-  git pull origin $child_branch
+  git pull -q origin $child_branch
   git rebase -q $parent_branch
   git push --force-with-lease origin $child_branch
 }
