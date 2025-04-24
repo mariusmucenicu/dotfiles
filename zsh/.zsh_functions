@@ -1,0 +1,47 @@
+prune_git_stale_branches() {
+  # This function removes both stale remote-tracking references and their
+  # corresponding local branches to keep your repository clean.
+
+  # Usage
+  # prune_git_stale_branches [remote]
+  #   remote: The remote repository name (defaults to 'origin').
+
+  # Example
+  # prune_git_stale_branches
+  # prune_git_stale_branches upstream
+
+  local remote=${1:-origin}
+  local stashed_changes=false
+  local stashed_msg="You have stashed changes. Make sure to pop or drop them."
+
+  typeset -i cleaned_branches=0
+  typeset -r format="%(refname:short) %(upstream:track,nobracket)"
+  typeset -r current_branch="$(git branch --show-current)"
+
+  git remote prune $remote > /dev/null
+
+  typeset -r default_branch=${(z)$(git remote show ${remote} | grep HEAD)[3]}
+
+  while read -r local_branch remote_state; do
+    [[ $remote_state != "gone" ]] && continue
+
+    if [[ $local_branch == $current_branch ]]; then
+      [[ -n $(git status --short) ]] && {
+        git stash -u
+        stashed_changes=true
+      }
+      git switch $default_branch
+    fi
+
+    git branch -D "$local_branch"
+    cleaned_branches+=1
+  done < <(git for-each-ref --format=${format} refs/heads) > /dev/null
+
+  if (( cleaned_branches == 0 )); then
+    echo "Everything is up to date."
+  else
+    echo "Total pruned branches: $cleaned_branches"
+  fi
+
+  [[ $stashed_changes == "true" ]] && echo ${stashed_msg}
+}
