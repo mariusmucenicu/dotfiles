@@ -45,3 +45,49 @@ prune_git_stale_branches() {
 
   [[ $stashed_changes == "true" ]] && echo ${stashed_msg}
 }
+
+
+prune_git_untracked_remotes() {
+  # This function scans all remote‑tracking references and deletes any
+  # remote/<branch> where there is no corresponding local branch <branch>.
+  # It keeps your remote‑tracking list in sync with your local branches.
+
+  # Usage
+  # prune_git_untracked_remotes [remote]
+  #   remote: The remote repository name (defaults to 'origin').
+
+  # Example
+  # prune_git_untracked_remotes
+  # prune_git_untracked_remotes upstream
+
+  local remote=${1:-origin}
+  local remote_base="${remote}/"
+  local remote_wildcard="${remote_base}*"
+
+  typeset -i cleaned_remotes=0
+
+  while read -r remote_reference; do
+    local remote_branch="${remote_reference#${remote_base}}"
+
+    if [[ -n $(git branch --list "${remote_branch}") ]]; then
+        continue
+    else
+      # Symbolic refs like 'origin/HEAD -> origin/main' point to another ref and
+      # don’t represent an actual remote-tracking branch. Since they can’t be
+      # deleted directly (as they’re just aliases), we need to strip the '-> …'
+      # suffix so only the ref name remains (e.g. 'origin/HEAD'), which we can
+      # then remove.
+      [[ $remote_reference == *"->"*  ]] \
+      && remote_reference="${remote_reference%% ->*}"
+
+      git branch -r -d "${remote_reference}"
+      cleaned_remotes+=1
+    fi
+  done < <(git branch -rl "${remote_wildcard}") > /dev/null
+
+  if (( cleaned_remotes == 0 )); then
+    echo "Everything is up to date."
+  else
+    echo "Total pruned remotes: $cleaned_remotes"
+  fi
+}
