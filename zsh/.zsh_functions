@@ -60,34 +60,29 @@ prune_git_untracked_remotes() {
   # prune_git_untracked_remotes
   # prune_git_untracked_remotes upstream
 
+  local local_branches=($(git branch --list --format='%(refname:short)'))
   local remote=${1:-origin}
   local remote_base="${remote}/"
   local remote_wildcard="${remote_base}*"
+  local remote_branches=()
 
-  typeset -i cleaned_remotes=0
 
   while read -r remote_reference; do
-    local remote_branch="${remote_reference#${remote_base}}"
 
-    if [[ -n $(git branch --list "${remote_branch}") ]]; then
-        continue
-    else
-      # Symbolic refs like 'origin/HEAD -> origin/main' point to another ref and
-      # don’t represent an actual remote-tracking branch. Since they can’t be
-      # deleted directly (as they’re just aliases), we need to strip the '-> …'
-      # suffix so only the ref name remains (e.g. 'origin/HEAD'), which we can
-      # then remove.
-      [[ $remote_reference == *"->"*  ]] \
-      && remote_reference="${remote_reference%% ->*}"
-
-      git branch -r -d "${remote_reference}"
-      cleaned_remotes+=1
+    if [[ -n ${local_branches[(r)${remote_reference#${remote_base}}]} ]]; then
+      continue
+    elif [[ $remote_reference == *"->"* ]]; then
+      remote_reference="${remote_reference%% ->*}"
     fi
-  done < <(git branch -rl "${remote_wildcard}") > /dev/null
 
-  if (( cleaned_remotes == 0 )); then
-    echo "Everything is up to date."
+    remote_branches+=("${remote_reference}")
+
+  done < <(git branch -rl "${remote_wildcard}")
+
+  if (( ${#remote_branches} )); then
+    git branch -r -d "${remote_branches[@]}" > /dev/null
+    echo "Total pruned branches: ${#remote_branches[@]}"
   else
-    echo "Total pruned remotes: $cleaned_remotes"
+    echo "Everything is up to date."
   fi
 }
