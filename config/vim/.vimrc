@@ -11,8 +11,8 @@ set number
 
 augroup filetype_indentation
   autocmd!
-  " Zsh files: 2 spaces
-  autocmd FileType zsh setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab
+  " Shell files: 2 spaces
+  autocmd FileType sh,zsh setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab
 
   " Python files: 4 spaces
   autocmd FileType python setlocal tabstop=4 shiftwidth=4 softtabstop=4 expandtab
