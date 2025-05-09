@@ -21,8 +21,8 @@ sync_branch() {
   local child_branch=$2
 
   git switch $child_branch
-  git pull -q origin $child_branch
-  git rebase -q $parent_branch
+  git pull origin $child_branch
+  git rebase $parent_branch
   git push --force-with-lease origin $child_branch
 }
 
@@ -34,7 +34,7 @@ for parent_branch in ${(k)BRANCHES}; do
 
   for child_branch in ${(z)BRANCHES[$parent_branch]}; do
     [[ $child_branch == ${$(uname -s):l} ]] && PLATFORM=$child_branch
-    sync_branch $parent_branch $child_branch > /dev/null
+    sync_branch $parent_branch $child_branch &> /dev/null
   done
 done
 
