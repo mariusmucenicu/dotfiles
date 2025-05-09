@@ -36,7 +36,9 @@
   lga = log --oneline --graph --all --pretty=custom
 
   # Remote & Sync
-  pf = push --force-with-lease
+  f = fetch
+  fo = fetch origin
+  pfl = push --force-with-lease
   po = pull origin
   rpo = remote prune origin
 
@@ -47,7 +49,7 @@
   stp = stash pop
 
   # Working Tree & Index
-  bb = restore  # this is a shorthand for bring back to not confuse with reset
+  bb = restore  # this is a shorthand for "bring back" to not confuse with reset
   bbs = restore --staged
   cd = clean -d
   cf = clean -f
