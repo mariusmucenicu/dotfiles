@@ -16,9 +16,14 @@ BRANCHES=(
 )
 
 
-sync_branch() {
+sync_and_rebase_branches() {
   local parent_branch=$1
   local child_branch=$2
+
+  if [[ $parent_branch == "master" ]]; then
+    git switch $parent_branch
+    git pull origin $parent_branch
+  fi
 
   git switch $child_branch
   git pull origin $child_branch
@@ -27,17 +32,14 @@ sync_branch() {
 }
 
 for parent_branch in ${(k)BRANCHES}; do
-  if [[ $parent_branch == "master" ]]; then
-    git switch $parent_branch
-    git pull origin $parent_branch
-  fi
-
   for child_branch in ${(z)BRANCHES[$parent_branch]}; do
     [[ $child_branch == ${$(uname -s):l} ]] && PLATFORM=$child_branch
-    sync_branch $parent_branch $child_branch &> /dev/null
+    sync_and_rebase_branches $parent_branch $child_branch &> /dev/null
   done
 done
 
+echo "All branches synchronized successfully."
+
 if [[ ${PLATFORM:-} != $(git branch --show-current) ]]; then
-  git switch $PLATFORM
+  git switch -q $PLATFORM
 fi
