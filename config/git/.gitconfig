@@ -47,6 +47,9 @@
   std = stash drop
   stl = stash list
   stp = stash pop
+  sts = stash show
+  stsp = stash show -p
+  stu = stash -u
 
   # Working Tree & Index
   bb = restore  # this is a shorthand for "bring back" to not confuse with reset
