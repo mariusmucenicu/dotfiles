@@ -16,6 +16,16 @@ BRANCHES=(
 )
 
 
+TRAPZERR() {
+  local err_code=$?
+  local abs_file_path="${${funcfiletrace[1]}%%:*}"
+  local abs_lineno="${${funcfiletrace[1]}##*:}"
+
+  echo "Error (code $err_code) thrown in $abs_file_path at line $abs_lineno." \
+  > /dev/tty
+}
+
+
 sync_and_rebase_branches() {
   local parent_branch=$1
   local child_branch=$2
