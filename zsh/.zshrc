@@ -25,17 +25,4 @@ WORDCHARS="_"
 eval "$(starship init zsh)"
 
 
-readonly ZSH_CONFIG_FILES=(
-  ~/.zsh_functions
-  ~/.zsh_aliases
-  ~/.zsh_keybindings
-)
-
-# Load Zsh configuration files
-for config_file in "${ZSH_CONFIG_FILES[@]}"; do
-  if [[ -f $config_file ]]; then
-    source $config_file
-  else
-    echo "No $config_file found, skipping..."
-  fi
-done
+[[ -f ~/.zsh_keybindings ]] && source ~/.zsh_keybindings
