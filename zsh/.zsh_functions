@@ -39,11 +39,13 @@ prune_git_stale_branches() {
 
   if (( cleaned_branches == 0 )); then
     echo "Everything is up to date."
+  elif [[ $stashed_changes == "true" ]]; then
+    echo "Total pruned branches: $cleaned_branches\n${stashed_msg}"
   else
     echo "Total pruned branches: $cleaned_branches"
   fi
 
-  [[ $stashed_changes == "true" ]] && echo ${stashed_msg}
+  return 0
 }
 
 
@@ -85,4 +87,6 @@ prune_git_untracked_remotes() {
   else
     echo "Everything is up to date."
   fi
+
+  return 0
 }
