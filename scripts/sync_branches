@@ -25,6 +25,7 @@ TRAPZERR() {
   > /dev/tty
 }
 
+{ gsp; gpu } > /dev/null
 
 sync_and_rebase_branches() {
   local parent_branch=$1
@@ -48,7 +49,7 @@ for parent_branch in ${(k)BRANCHES}; do
   done
 done
 
-echo "All branches synchronized successfully."
+echo "Everything is up to date."
 
 if [[ ${PLATFORM:-} != $(git branch --show-current) ]]; then
   git switch -q $PLATFORM
