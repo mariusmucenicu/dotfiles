@@ -25,7 +25,7 @@ TRAPZERR() {
   > /dev/tty
 }
 
-{ gsp; gpu }
+{ gsp; gpu } &> /dev/null
 
 sync_and_rebase_branches() {
   local parent_branch=$1
