@@ -35,7 +35,7 @@ prune_git_stale_branches() {
 
     git branch -D "$local_branch"
     cleaned_branches+=1
-  done < <(git for-each-ref --format=${format} refs/heads) > /dev/null
+  done < <(git for-each-ref --format=${format} refs/heads) &> /dev/null
 
   if (( cleaned_branches == 0 )); then
     echo "Everything is up to date."
