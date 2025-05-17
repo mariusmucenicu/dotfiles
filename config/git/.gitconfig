@@ -3,62 +3,67 @@
 
 [alias]
   # Branch Management
-  b = branch
-  ba = branch -a
-  bc = switch -c
-  bd = branch -D
-  bl = branch -l
-  br = branch -r
-  bs = switch
+  b     = branch
+  ba    = branch -a
+  bc    = switch -c
+  bd    = branch -D
+  bl    = branch -l
+  br    = branch -r
+  bs    = switch
 
   # Commits & Rewrites
   amend = commit --amend --no-edit
-  cam = commit -am
-  cm = commit -m
-  cp = cherry-pick
+  cam   = commit -am
+  cm    = commit -m
+  cp    = cherry-pick
 
-  rb = rebase
-  rba = rebase --abort
-  rbc = rebase --continue
-  rbi = rebase -i
-  rbs = rebase --skip
+  rb    = rebase
+  rba   = rebase --abort
+  rbc   = rebase --continue
+  rbi   = rebase -i
+  rbs   = rebase --skip
 
-  r = reset
-  rh = reset --hard
-  rs = reset --soft
+  r     = reset
+  rh    = reset --hard
+  rs    = reset --soft
 
   # Inspect & History
-  d = diff
-  dn = diff --name-only
-  dns = diff --staged --name-only
-  ds = diff --staged
-  lg = log --oneline --graph --pretty=custom
-  lga = log --oneline --graph --all --pretty=custom
+  d     = diff
+  dn    = diff --name-only
+  dns   = diff --staged --name-only
+  ds    = diff --staged
+  lg    = log --oneline --graph --pretty=custom
+  lga   = log --oneline --graph --all --pretty=custom
+  sh    = show
+  shn   = show --no-patch
+  shf   = show --name-only
+  shs   = show --name-status
+  shc   = show --compact-summary
 
   # Remote & Sync
-  f = fetch
-  fo = fetch origin
-  pfl = push --force-with-lease
-  po = pull origin
-  rpo = remote prune origin
+  f     = fetch
+  fo    = fetch origin
+  pfl   = push --force-with-lease
+  po    = pull origin
+  rpo   = remote prune origin
 
   # Stash
-  st = stash
-  std = stash drop
-  stl = stash list
-  stp = stash pop
-  sts = stash show
-  stsp = stash show -p
-  stu = stash -u
+  st    = stash
+  std   = stash drop
+  stl   = stash list
+  stp   = stash pop
+  sts   = stash show
+  stsp  = stash show -p
+  stu   = stash -u
 
   # Working Tree & Index
-  bb = restore  # this is a shorthand for "bring back" to not confuse with reset
-  bbs = restore --staged
-  cd = clean -d
-  cf = clean -f
-  cfd = clean -fd
-  s = status
-  ss = status --short
+  bb    = restore  # this is a shorthand for "bring back" to not confuse with reset
+  bbs   = restore --staged
+  cd    = clean -d
+  cf    = clean -f
+  cfd   = clean -fd
+  s     = status
+  ss    = status --short
 
 [color "branch"]
   current = bold yellow
