@@ -25,7 +25,15 @@ TRAPZERR() {
   > /dev/tty
 }
 
-{ gsp; gpu } &> /dev/null
+
+echo "Pruning stale branches..."
+echo "$(gsp)\n"
+
+echo "Pruning untracked remotes..."
+echo "$(gpu)\n"
+
+echo "Syncing branches..."
+
 
 sync_and_rebase_branches() {
   local parent_branch=$1
