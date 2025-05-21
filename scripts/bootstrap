@@ -1,53 +1,104 @@
 #!/bin/zsh
 
-#If a command has a non-zero exit status, execute the ZERR trap, if set, and exit.
-set -e
+# -e: If a command has a non-zero exit status, execute the ZERR trap and exit.
+# -u: Treat unset variables as an error when substituting.
+# -o pipefail: Return exit status of last command in pipeline that failed.
+set -euo pipefail
 
-# Treat unset variables as an error and exit immediately.
-set -u
+zparseopts -D -K -backup=activate_backup
 
-# Return the exit status of the last command in a pipeline that failed, rather than the exit status
-# of the last command in the pipeline.
-set -o pipefail
-
-
-DRY_RUN=${DRY_RUN:-false}
-ROOT_DIR=$(git rev-parse --show-toplevel)
-
+typeset -r ROOT_DIR="$(git rev-parse --show-toplevel)"
+typeset -r SHOULD_BACKUP=$(( ${+activate_backup} ))
+typeset -i BACKUP_COUNT=0
 typeset -A STOW_DESTINATIONS
 
 STOW_DESTINATIONS=(
   [$HOME]="zsh git vim"
-  [$HOME/.ssh/]="ssh"
-  [$HOME/.config/]="starship"
+  [$HOME/.ssh]="ssh"
+  [$HOME/.config]="starship"
 )
 
-create_symlinks() {
-  local destination=$1
-  local package=$2
-  local package_location=$3
 
-  pushd $(dirname $package_location) > /dev/null
-
-  if [[ $DRY_RUN == "true" ]]; then
-    stow --simulate --verbose --adopt --target $destination $package
-  else
-    stow --adopt --target $destination $package
+backup_file() {
+  local file="$1"
+  local package_location="$2"
+  local backup_dir_root="${$HOME/.local/share}/dotfiles-backups"
+  local backup_dir="${backup_dir_root}/${package_location##*dotfiles/}"
+  
+  if [[ ! -d "$backup_dir" ]]; then
+    mkdir -p "$backup_dir"
   fi
 
-  popd > /dev/null
+  mv "$file" "$backup_dir"
+  BACKUP_COUNT+=1
 }
 
+
+backup_package() {
+  local destination="$1"
+  local package_location="$2"
+  local package_contents=("${(f)$(find "${package_location}" -type f)}")
+
+  for source_file in $package_contents; do
+    destination_file="${destination}/${source_file##*/}"
+
+    if [[ -f "${destination_file}" ]] && \
+       [[ "$(realpath "${destination_file}")" == "${source_file}" ]]; then
+      continue
+    elif [[ -f "${destination_file}" ]]; then
+      backup_file "$destination_file" "$package_location"
+    fi
+  done
+
+}
+
+
+create_symlinks() {
+  local destination="$1"
+  local package="$2"
+  local package_location="$3"
+  local package_parent_dir="$(dirname "${package_location}")"
+
+  if (( SHOULD_BACKUP )); then
+    backup_package "$destination" "$package_location"
+    stow --dir="$package_parent_dir" --target="$destination" "$package"
+  else
+    stow --adopt --dir="$package_parent_dir" --target="$destination" "$package"
+  fi
+}
+
+
+if (( SHOULD_BACKUP )); then
+  echo "Creating symlinks in backup mode..."
+else  
+  echo "Creating symlinks in adopt mode..."
+fi
 
 for destination in ${(k)STOW_DESTINATIONS}; do
   for package in ${(z)STOW_DESTINATIONS[$destination]}; do  
 
-    package_location=$(find $ROOT_DIR -type d -name $package)
-    if [[ -z $package_location ]]; then
+    package_location="$(find "$ROOT_DIR" -type d -name "$package")"
+    if [[ -z "$package_location" ]]; then
       continue
     else
-      create_symlinks $destination $package $package_location
+      create_symlinks "$destination" "$package" "$package_location"
     fi
 
   done
 done
+
+if (( SHOULD_BACKUP )); then
+  case $BACKUP_COUNT in
+    0)
+      echo "No files backed up: either no conflicts or files already symlinked."
+      ;;
+    1)
+      echo "$BACKUP_COUNT file was backed up."
+      ;;
+    *)
+      echo "$BACKUP_COUNT files were backed up."
+      ;;
+  esac
+fi
+
+echo "Done."
