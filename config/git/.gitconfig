@@ -59,7 +59,6 @@
   # Working Tree & Index
   bb    = restore  # this is a shorthand for "bring back" to not confuse with reset
   bbs   = restore --staged
-  cd    = clean -d
   cf    = clean -f
   cfd   = clean -fd
   s     = status
