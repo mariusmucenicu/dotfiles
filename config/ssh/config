@@ -1,6 +1,7 @@
+# Include sensitive or environment-specific SSH configurations
+Include ~/.ssh/config.local
+
 Host *
-    User dev
-    ForwardAgent yes
     ServerAliveInterval 300
     ServerAliveCountMax 2
     Compression yes
