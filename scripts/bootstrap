@@ -7,30 +7,43 @@ set -euo pipefail
 
 zparseopts -D -K -backup=activate_backup
 
-typeset -r ROOT_DIR="$(git rev-parse --show-toplevel)"
+typeset -r ROOT_DIR="${0:A:h:h}"
 typeset -r SHOULD_BACKUP=$(( ${+activate_backup} ))
 typeset -i BACKUP_COUNT=0
 typeset -A STOW_DESTINATIONS
 
 STOW_DESTINATIONS=(
-  [$HOME]="zsh git vim"
-  [$HOME/.ssh]="ssh"
-  [$HOME/.config]="starship"
+  [$HOME]="zsh config/git config/vim"
+  [$HOME/.ssh]="config/ssh"
+  [$HOME/.config]="config/starship"
 )
 
 
 backup_file() {
   local file="$1"
   local package_location="$2"
-  local backup_dir_root="${$HOME/.local/share}/dotfiles-backups"
-  local backup_dir="${backup_dir_root}/${package_location##*dotfiles/}"
-  
-  if [[ ! -d "$backup_dir" ]]; then
-    mkdir -p "$backup_dir"
-  fi
+  local backup_dir_root="${XDG_DATA_HOME:-$HOME/.local/share}/dotfiles-backups"
+  local backup_dir="${backup_dir_root}/${package_location#${ROOT_DIR}/}"
+
+  mkdir -p "$backup_dir"
 
   mv "$file" "$backup_dir"
   BACKUP_COUNT+=1
+}
+
+
+remove_links() {
+  local destination="$1"
+  local package_location="$2"
+  local package_contents=("${(f)$(find "${package_location}" -type f)}")
+
+  for source_file in $package_contents; do
+    destination_file="${destination}/${source_file##*/}"
+
+    if [[ -L "${destination_file}" ]] && [[ "${destination_file:A}" != "${source_file}" ]]; then
+      rm "${destination_file}"
+    fi
+  done
 }
 
 
@@ -42,22 +55,21 @@ backup_package() {
   for source_file in $package_contents; do
     destination_file="${destination}/${source_file##*/}"
 
-    if [[ -f "${destination_file}" ]] && \
-       [[ "$(realpath "${destination_file}")" == "${source_file}" ]]; then
-      continue
-    elif [[ -f "${destination_file}" ]]; then
+    if [[ -e "${destination_file}" ]] && [[ ! -L "${destination_file}" ]]; then
       backup_file "$destination_file" "$package_location"
     fi
   done
-
 }
 
 
 create_symlinks() {
   local destination="$1"
-  local package="$2"
-  local package_location="$3"
-  local package_parent_dir="$(dirname "${package_location}")"
+  local package_location="$2"
+  local package="${package_location:t}"
+  local package_parent_dir="${package_location:h}"
+
+  mkdir -p "$destination"
+  remove_links "$destination" "$package_location"
 
   if (( SHOULD_BACKUP )); then
     backup_package "$destination" "$package_location"
@@ -70,20 +82,14 @@ create_symlinks() {
 
 if (( SHOULD_BACKUP )); then
   echo "Creating symlinks in backup mode..."
-else  
+else
   echo "Creating symlinks in adopt mode..."
 fi
 
 for destination in ${(k)STOW_DESTINATIONS}; do
-  for package in ${(z)STOW_DESTINATIONS[$destination]}; do  
-
-    package_location="$(find "$ROOT_DIR" -type d -name "$package")"
-    if [[ -z "$package_location" ]]; then
-      continue
-    else
-      create_symlinks "$destination" "$package" "$package_location"
-    fi
-
+  for package_path in ${(z)STOW_DESTINATIONS[$destination]}; do
+    package_location="${ROOT_DIR}/${package_path}"
+    create_symlinks "$destination" "$package_location"
   done
 done
 
