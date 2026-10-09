@@ -88,3 +88,7 @@
 
 [rebase]
   autoStash = true
+
+# Include sensitive or environment-specific Git configurations
+[include]
+  path = ~/.gitconfig.local
