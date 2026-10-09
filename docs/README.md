@@ -24,7 +24,7 @@ Below is a visual representation of how the branches are organized:
 ### 1. Clone the Repository
 
 ```bash
-git clone --branch <platform-branch-name> https://github.com/<mariusmucenicu>/<dotfiles>.git dotfiles
+git clone --branch <platform-branch-name> https://github.com/mariusmucenicu/dotfiles.git dotfiles
 cd dotfiles
 ```
 
@@ -40,7 +40,7 @@ Each branch includes a platform-specific entry point in the `scripts` directory.
 
 #### Darwin & Linux:
 ```bash
-./scripts/bootstrap.sh
+./scripts/bootstrap
 ```
 
 #### Windows:
@@ -55,7 +55,7 @@ This repository is primarily for personal use, but feel free to explore it and a
 
 ## 📜 License
 
-This project is licensed under the **GPL-3.0-or-later** license. See the [COPYING](COPYING) file for details.
+This project is licensed under the **GPL-3.0-or-later** license. See the [COPYING](../COPYING) file for details.
 
 ---
 
