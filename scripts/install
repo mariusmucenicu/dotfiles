@@ -1,0 +1,17 @@
+#!/bin/zsh
+
+set -euo pipefail
+
+typeset -r ROOT_DIR="${0:A:h:h}"
+
+sudo apt-get update
+sudo apt-get install -y ${(f)"$(<"${ROOT_DIR}/install/apt/packages")"}
+
+starship_installer_url="https://starship.rs/install.sh"
+starship_installer="$(curl -fsSL "${starship_installer_url}")"
+sh -s -- --yes <<< "${starship_installer}"
+
+zsh_path="$(command -v zsh)"
+if [[ "$(getent passwd "$(id -un)")" != *":${zsh_path}" ]]; then
+  sudo chsh -s "${zsh_path}" "$(id -un)"
+fi
