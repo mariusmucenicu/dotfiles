@@ -66,31 +66,24 @@ prune_git_untracked_remotes() {
   # prune_git_untracked_remotes
   # prune_git_untracked_remotes upstream
 
-  local local_branches=($(git branch --list --format='%(refname:short)'))
+  setopt localoptions errreturn
+
   local remote=${1:-origin}
-  local remote_base="${remote}/"
-  local remote_wildcard="${remote_base}*"
-  local remote_branches=()
+  local remote_branch
+  local -a local_branches untracked_remotes
 
+  local_branches=(${(f)"$(git for-each-ref --format='%(refname:short)' refs/heads)"})
 
-  while read -r remote_reference; do
+  while read -r remote_branch; do
+    [[ $remote_branch == "HEAD" ]] && continue
+    (( ${local_branches[(Ie)$remote_branch]} )) || untracked_remotes+=(${remote}/${remote_branch})
+  done < <(git for-each-ref --format='%(refname:lstrip=3)' refs/remotes/${remote})
 
-    if [[ -n ${local_branches[(r)${remote_reference#${remote_base}}]} ]]; then
-      continue
-    elif [[ $remote_reference == *"->"* ]]; then
-      remote_reference="${remote_reference%% ->*}"
-    fi
-
-    remote_branches+=("${remote_reference}")
-
-  done < <(git branch -rl "${remote_wildcard}")
-
-  if (( ${#remote_branches} )); then
-    git branch -r -d "${remote_branches[@]}" > /dev/null
-    echo "Total pruned branches: ${#remote_branches[@]}"
-  else
+  if (( ${#untracked_remotes} == 0 )); then
     echo "Everything is up to date."
+    return 0
   fi
 
-  return 0
+  git branch -r -d "${untracked_remotes[@]}" > /dev/null
+  echo "Total pruned branches: ${#untracked_remotes}"
 }
