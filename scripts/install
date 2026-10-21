@@ -1,0 +1,15 @@
+#!/bin/zsh
+
+set -euo pipefail
+
+typeset -r ROOT_DIR="${0:A:h:h}"
+
+if (( ! ${+commands[brew]} )); then
+  homebrew_installer="$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  /bin/bash -c "${homebrew_installer}"
+fi
+
+homebrew_env="$(/opt/homebrew/bin/brew shellenv)"
+eval "${homebrew_env}"
+
+brew bundle --file "${ROOT_DIR}/install/brew/Brewfile"
