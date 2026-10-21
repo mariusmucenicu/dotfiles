@@ -4,5 +4,5 @@ set -euo pipefail
 
 typeset -r SCRIPTS_DIR="${0:A:h}"
 
-"${SCRIPTS_DIR}/install"
+source "${SCRIPTS_DIR}/install"
 "${SCRIPTS_DIR}/link" "$@"
