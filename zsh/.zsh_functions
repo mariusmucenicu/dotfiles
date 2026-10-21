@@ -10,42 +10,46 @@ prune_git_stale_branches() {
   # prune_git_stale_branches
   # prune_git_stale_branches upstream
 
+  setopt localoptions errreturn
+
   local remote=${1:-origin}
   local stashed_changes=false
   local stashed_msg="You have stashed changes. Make sure to pop or drop them."
+  local default_branch local_branch remote_state
+  local -a stale_branches
 
-  typeset -i cleaned_branches=0
   typeset -r format="%(refname:short) %(upstream:track,nobracket)"
   typeset -r current_branch="$(git branch --show-current)"
 
   git remote prune $remote > /dev/null
 
-  typeset -r default_branch=${(z)$(git remote show ${remote} | grep HEAD)[3]}
-
   while read -r local_branch remote_state; do
-    [[ $remote_state != "gone" ]] && continue
+    [[ $remote_state == "gone" ]] && stale_branches+=($local_branch)
+  done < <(git for-each-ref --format=${format} refs/heads)
 
-    if [[ $local_branch == $current_branch ]]; then
-      [[ -n $(git status --short) ]] && {
-        git stash -u
-        stashed_changes=true
-      }
-      git switch $default_branch
-    fi
-
-    git branch -D "$local_branch"
-    cleaned_branches+=1
-  done < <(git for-each-ref --format=${format} refs/heads) &> /dev/null
-
-  if (( cleaned_branches == 0 )); then
+  if (( ${#stale_branches} == 0 )); then
     echo "Everything is up to date."
-  elif [[ $stashed_changes == "true" ]]; then
-    echo "Total pruned branches: $cleaned_branches\n${stashed_msg}"
-  else
-    echo "Total pruned branches: $cleaned_branches"
+    return 0
   fi
 
-  return 0
+  if (( ${stale_branches[(Ie)$current_branch]} )); then
+    default_branch="$(git symbolic-ref --short refs/remotes/${remote}/HEAD)"
+
+    if [[ -n $(git status --short) ]]; then
+      git stash -u > /dev/null
+      stashed_changes=true
+    fi
+
+    git switch --quiet ${default_branch#${remote}/}
+  fi
+
+  git branch -D "${stale_branches[@]}" > /dev/null
+
+  if [[ $stashed_changes == "true" ]]; then
+    echo "Total pruned branches: ${#stale_branches}\n${stashed_msg}"
+  else
+    echo "Total pruned branches: ${#stale_branches}"
+  fi
 }
 
 
