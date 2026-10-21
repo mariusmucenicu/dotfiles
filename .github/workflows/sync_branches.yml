@@ -1,0 +1,47 @@
+name: Sync branches
+
+on:
+  push:
+    branches: [master, unix, windows, linux, darwin]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-branches
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Rebase children onto their parents
+        run: |
+          set -euo pipefail
+
+          PARENTS=(master unix)
+          declare -A CHILDREN=(
+            [master]="unix windows"
+            [unix]="linux darwin"
+          )
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config advice.skippedCherryPicks false
+
+          git switch --quiet master
+
+          for parent in "${PARENTS[@]}"; do
+            for child in ${CHILDREN[$parent]}; do
+              git switch --quiet "$child"
+              echo "Rebasing $child onto $parent"
+              git rebase --quiet "$parent"
+            done
+          done
+
+          git push --atomic --force-with-lease origin ${CHILDREN[@]}
