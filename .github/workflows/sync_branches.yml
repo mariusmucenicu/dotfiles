@@ -2,7 +2,7 @@ name: Sync branches
 
 on:
   push:
-    branches: [master, unix, windows, linux, darwin]
+    branches: [master, unix, windows, debian, darwin]
   workflow_dispatch:
 
 permissions:
@@ -27,7 +27,7 @@ jobs:
           PARENTS=(master unix)
           declare -A CHILDREN=(
             [master]="unix windows"
-            [unix]="linux darwin"
+            [unix]="debian darwin"
           )
 
           git config user.name "github-actions[bot]"

@@ -2,7 +2,7 @@
 
 This is a modular and scalable setup designed for managing dotfiles configurations across multiple platforms. Each platform is represented by a dedicated Git branch, ensuring clean separation of platform-specific configurations while keeping common configurations in a base branch.
 
-> **Note**: The `master` branch holds shared configurations for all platforms. Both the `unix` and `windows` branches inherit from `master`, with `unix` serving as a base for Unix-based platforms like `darwin` and `linux`, while the `windows` branch adds configurations specific to Windows environments. Each platform-specific branch sets up its own configurations and acts as the primary entry point for that platform.
+> **Note**: The `master` branch holds shared configurations for all platforms. Both the `unix` and `windows` branches inherit from `master`, with `unix` serving as a base for Unix-based platforms like `darwin` and `debian`, while the `windows` branch adds configurations specific to Windows environments. Each platform-specific branch sets up its own configurations and acts as the primary entry point for that platform.
 
 Below is a visual representation of how the branches are organized:
 
@@ -13,7 +13,7 @@ Below is a visual representation of how the branches are organized:
 - [🚀 Quick Start](#-quick-start)
   - [1. Clone the Repository](#1-clone-the-repository)
   - [2. Run the Bootstrap Script](#2-run-the-bootstrap-script)
-    - [Darwin & Linux](#darwin--linux)
+    - [Darwin & Debian](#darwin--debian)
     - [Windows](#windows)
 - [🌟 Contributing](#-contributing)
 - [📜 License](#-license)
@@ -31,14 +31,14 @@ cd dotfiles
 Replace `<platform-branch-name>` with your platform of choice:
 - `darwin`
 - `windows`
-- `linux`
+- `debian`
 
 
 ### 2. Run the Bootstrap Script
 
 Each branch includes a platform-specific entry point in the `scripts` directory. For example:
 
-#### Darwin & Linux:
+#### Darwin & Debian:
 ```bash
 ./scripts/bootstrap
 ```
