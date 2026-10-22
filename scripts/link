@@ -5,7 +5,7 @@
 # -o pipefail: Return exit status of last command in pipeline that failed.
 set -euo pipefail
 
-zparseopts -D -K -backup=activate_backup
+zparseopts -D -K -F -backup=activate_backup
 
 typeset -r ROOT_DIR="${0:A:h:h}"
 typeset -r SHOULD_BACKUP=$(( ${+activate_backup} ))
