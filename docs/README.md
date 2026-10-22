@@ -63,7 +63,7 @@ Each branch includes a platform-specific entry point in the `scripts` directory.
 
 #### Windows:
 ```powershell
-.\scripts\install.ps1
+.\scripts\bootstrap.ps1
 ```
 
 ## 🌟 Contributing
