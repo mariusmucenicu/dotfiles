@@ -54,8 +54,6 @@ Replace `<platform-branch-name>` with your platform of choice:
 
 ### 3. Run the Bootstrap Script
 
-Each branch includes a platform-specific entry point in the `scripts` directory. For example:
-
 #### Darwin & Debian:
 ```bash
 ./scripts/bootstrap
