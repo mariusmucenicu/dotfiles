@@ -1,1 +1,22 @@
+# Maximum time in milliseconds a command run by a module may take.
 command_timeout = 1500
+
+# Show the clock on the right side of the prompt.
+right_format = "$time"
+
+# Show the current time.
+[time]
+disabled = false
+
+# Show the number of added and deleted lines in the current git repository.
+[git_metrics]
+disabled = false
+
+# Show how many commits and files are pending, not just that something is.
+[git_status]
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+modified = "!${count}"
+staged = "+${count}"
+untracked = "?${count}"
