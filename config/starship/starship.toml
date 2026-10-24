@@ -12,7 +12,7 @@ disabled = false
 [git_metrics]
 disabled = false
 
-# Show how many commits and files are pending, not just that something is.
+# Add counts to git status.
 [git_status]
 ahead = "⇡${count}"
 behind = "⇣${count}"
