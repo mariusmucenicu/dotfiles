@@ -16,6 +16,9 @@ STOW_DESTINATIONS=(
   [$HOME]="zsh config/git config/vim"
   [$HOME/.ssh]="config/ssh"
   [$HOME/.config]="config/starship"
+  [$HOME/.agents]="agents/instructions"
+  [$HOME/.codex]="agents/instructions"
+  [$HOME/.claude]="agents/claude"
 )
 
 
