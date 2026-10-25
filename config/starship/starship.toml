@@ -11,12 +11,3 @@ disabled = false
 # Show the number of added and deleted lines in the current git repository.
 [git_metrics]
 disabled = false
-
-# Add counts to git status.
-[git_status]
-ahead = "⇡${count}"
-behind = "⇣${count}"
-diverged = "⇕⇡${ahead_count}⇣${behind_count}"
-modified = "!${count}"
-staged = "+${count}"
-untracked = "?${count}"
