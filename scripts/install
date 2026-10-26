@@ -13,4 +13,5 @@ fi
 homebrew_env="$(/opt/homebrew/bin/brew shellenv)"
 eval "${homebrew_env}"
 
-brew bundle --file "${ROOT_DIR}/install/brew/Brewfile"
+echo "Installing dependencies..."
+brew bundle --quiet --file "${ROOT_DIR}/install/brew/Brewfile"
