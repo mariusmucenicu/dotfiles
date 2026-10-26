@@ -5,11 +5,7 @@
 # -o pipefail: Return exit status of last command in pipeline that failed.
 set -euo pipefail
 
-zparseopts -D -K -F -backup=activate_backup
-
 typeset -r ROOT_DIR="${0:A:h:h}"
-typeset -r SHOULD_BACKUP=$(( ${+activate_backup} ))
-typeset -i BACKUP_COUNT=0
 typeset -A STOW_DESTINATIONS
 
 STOW_DESTINATIONS=(
@@ -20,92 +16,77 @@ STOW_DESTINATIONS=(
 )
 
 
-backup_file() {
-  local file="$1"
-  local package_location="$2"
-  local backup_dir_root="${XDG_DATA_HOME:-$HOME/.local/share}/dotfiles-backups"
-  local backup_dir="${backup_dir_root}/${package_location#${ROOT_DIR}/}"
+remove_path() {
+  local target="$1"
 
-  mkdir -p "$backup_dir"
-
-  mv "$file" "$backup_dir"
-  BACKUP_COUNT+=1
+  rm -rf "${target}"
+  echo "Removed ${target}"
 }
 
 
-remove_links() {
+prepare_destination() {
   local destination="$1"
-  local package_location="$2"
-  local package_contents=("${(f)$(find "${package_location}" -type f)}")
 
-  for source_file in $package_contents; do
-    destination_file="${destination}/${source_file##*/}"
+  if [[ -e "${destination}" || -L "${destination}" ]] && [[ ! -d "${destination}" ]]; then
+    remove_path "${destination}"
+  fi
 
-    if [[ -L "${destination_file}" ]] && [[ "${destination_file:A}" != "${source_file}" ]]; then
-      rm "${destination_file}"
-    fi
-  done
+  mkdir -p "${destination}"
 }
 
 
-backup_package() {
-  local destination="$1"
-  local package_location="$2"
-  local package_contents=("${(f)$(find "${package_location}" -type f)}")
+prepare_folder() {
+  local folder="$1"
 
-  for source_file in $package_contents; do
-    destination_file="${destination}/${source_file##*/}"
-
-    if [[ -e "${destination_file}" ]] && [[ ! -L "${destination_file}" ]]; then
-      backup_file "$destination_file" "$package_location"
-    fi
-  done
-}
-
-
-create_symlinks() {
-  local destination="$1"
-  local package_location="$2"
-  local package="${package_location:t}"
-  local package_parent_dir="${package_location:h}"
-
-  mkdir -p "$destination"
-  remove_links "$destination" "$package_location"
-
-  if (( SHOULD_BACKUP )); then
-    backup_package "$destination" "$package_location"
-    stow --dir="$package_parent_dir" --target="$destination" "$package"
-  else
-    stow --adopt --dir="$package_parent_dir" --target="$destination" "$package"
+  if [[ -L "${folder}" ]] || { [[ -e "${folder}" ]] && [[ ! -d "${folder}" ]]; }; then
+    remove_path "${folder}"
   fi
 }
 
 
-if (( SHOULD_BACKUP )); then
-  echo "Creating symlinks in backup mode..."
-else
-  echo "Creating symlinks in adopt mode..."
-fi
+prepare_target() {
+  local source_file="$1"
+  local target="$2"
+
+  if [[ -L "${target}" ]] && [[ "$(readlink "${target}")" != /* ]] && [[ "${target:A}" == "${source_file}" ]]; then
+    return 0
+  elif [[ -e "${target}" || -L "${target}" ]]; then
+    remove_path "${target}"
+  fi
+}
+
+
+link_package() {
+  local destination="$1"
+  local package_location="$2"
+  local source_file relative_path folder part
+  local -a parts
+
+  prepare_destination "${destination}"
+
+  for source_file in ${(f)"$(find "${package_location}" -type f)"}; do
+    relative_path="${source_file#${package_location}/}"
+    parts=(${(s:/:)relative_path})
+    folder="${destination}"
+
+    for part in ${parts[1,-2]}; do
+      folder+="/${part}"
+      prepare_folder "${folder}"
+    done
+
+    prepare_target "${source_file}" "${destination}/${relative_path}"
+  done
+
+  stow --restow --no-folding --dir="${package_location:h}" --target="${destination}" "${package_location:t}"
+}
+
+
+echo "Linking dotfiles..."
 
 for destination in ${(k)STOW_DESTINATIONS}; do
   for package_path in ${(z)STOW_DESTINATIONS[$destination]}; do
-    package_location="${ROOT_DIR}/${package_path}"
-    create_symlinks "$destination" "$package_location"
+    link_package "${destination}" "${ROOT_DIR}/${package_path}"
   done
 done
-
-if (( SHOULD_BACKUP )); then
-  case $BACKUP_COUNT in
-    0)
-      echo "No files backed up: either no conflicts or files already symlinked."
-      ;;
-    1)
-      echo "$BACKUP_COUNT file was backed up."
-      ;;
-    *)
-      echo "$BACKUP_COUNT files were backed up."
-      ;;
-  esac
-fi
 
 echo "Done."
