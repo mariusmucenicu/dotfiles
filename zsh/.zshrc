@@ -8,10 +8,10 @@ compinit
 HISTFILE=~/.zsh_history
 
 # Maximum number of commands kept in memory for the current session.
-HISTSIZE=2500
+HISTSIZE=5000
 
 # Maximum number of commands saved to the history file.
-SAVEHIST=2500
+SAVEHIST=5000
 
 # If a new command line being added to the history list duplicates an older one,
 # the older command is removed from the list.
