@@ -1,0 +1,10 @@
+{
+  "model": "opus",
+  "skipWorkflowUsageWarning": true,
+  "theme": "auto",
+  "outputStyle": "Concise",
+  "fallbackModel": [
+    "sonnet"
+  ],
+  "showClearContextOnPlanAccept": true
+}
