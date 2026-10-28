@@ -6,5 +6,6 @@
   "fallbackModel": [
     "sonnet"
   ],
-  "showClearContextOnPlanAccept": true
+  "showClearContextOnPlanAccept": true,
+  "attribution": false
 }
