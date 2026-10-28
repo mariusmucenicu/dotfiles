@@ -13,12 +13,17 @@ HISTSIZE=5000
 # Maximum number of commands saved to the history file.
 SAVEHIST=5000
 
-# If a new command line being added to the history list duplicates an older one,
-# the older command is removed from the list.
+# Remove the older copy when a command duplicates one already in memory.
 setopt HIST_IGNORE_ALL_DUPS
 
-# Verify the command retrieved from history before executing.
-setopt HIST_VERIFY 
+# Omit older duplicates of newer commands when writing the history file.
+setopt HIST_SAVE_NO_DUPS
+
+# Skip duplicates when searching the history.
+setopt HIST_FIND_NO_DUPS
+
+# Show history expansions such as !! for review instead of running them.
+setopt HIST_VERIFY
 
 # Remove extra spaces from commands before storing them in history.
 setopt HIST_REDUCE_BLANKS
@@ -26,8 +31,7 @@ setopt HIST_REDUCE_BLANKS
 # Offer command spelling correction suggestions.
 setopt CORRECT
 
-# Define which characters are considered part of a word when performing
-# word-based operations, such as moving the cursor by words or deleting words.
+# Characters treated as part of a word when moving the cursor or deleting by word.
 WORDCHARS="_"
 
 # Initialize the Starship prompt.
