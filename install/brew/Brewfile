@@ -1,4 +1,5 @@
 brew "stow"
 brew "starship"
+brew "uv"
 cask "claude-code@latest"
 cask "codex"
