@@ -14,6 +14,8 @@ STOW_DESTINATIONS=(
   [$HOME/.ssh]="ssh"
   [$HOME/.config]="starship"
   [$HOME/.claude]="agents/claude"
+  [$HOME/.codex]="agents/codex"
+  [$HOME/.copilot]="agents/copilot"
 )
 
 
