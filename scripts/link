@@ -48,7 +48,7 @@ prepare_target() {
   local source_file="$1"
   local target="$2"
 
-  if [[ -L "${target}" ]] && [[ "$(readlink "${target}")" != /* ]] && [[ "${target:A}" == "${source_file}" ]]; then
+  if [[ -L "${target}" ]] && [[ "$(readlink "${target}")" != /* ]] && [[ "${target:A}" == "${source_file:A}" ]]; then
     return 0
   elif [[ -e "${target}" || -L "${target}" ]]; then
     remove_path "${target}"
@@ -64,7 +64,7 @@ link_package() {
 
   prepare_destination "${destination}"
 
-  for source_file in ${(f)"$(find "${package_location}" -type f)"}; do
+  for source_file in ${(f)"$(find "${package_location}" \( -type f -o -type l \))"}; do
     relative_path="${source_file#${package_location}/}"
     parts=(${(s:/:)relative_path})
     folder="${destination}"
